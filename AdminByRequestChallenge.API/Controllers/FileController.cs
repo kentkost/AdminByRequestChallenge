@@ -7,7 +7,7 @@ namespace AdminByRequestChallenge.API.Controllers;
 [Route("[controller]")]
 public class FileController(IWebHostEnvironment env) : ControllerBase
 {
-    [HttpGet("DownloadSecretFile"), AllowAnonymous]
+    [HttpGet("DownloadSecretFile")]
     public async Task<IActionResult> DownloadFile()
     {
         const string fileName = "developers.gif";
