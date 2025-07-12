@@ -8,7 +8,7 @@ namespace AdminByRequestChallenge.API;
 public sealed class SessionKeyAuthenticationOptions : AuthenticationSchemeOptions
 {
     public const string DefaultScheme = "SessionKey";
-    public string HeaderName { get; init; } = "X-Session-Key";   // change if cookie
+    public string HeaderName { get; init; } = "X-Session-Key";
 }
 
 public sealed class SessionKeyAuthenticationHandler
@@ -21,10 +21,9 @@ public sealed class SessionKeyAuthenticationHandler
         IOptionsMonitor<SessionKeyAuthenticationOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder,
-        ISystemClock clock,
         ISessionStore store,
         IJwtFactory jwtFactory)
-        : base(options, logger, encoder, clock)
+        : base(options, logger, encoder)
     {
         _store = store;
         _jwtFactory = jwtFactory;
@@ -32,7 +31,6 @@ public sealed class SessionKeyAuthenticationHandler
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        // 1) pull the key
         if (!Request.Headers.TryGetValue(Options.HeaderName, out var values))
             return Task.FromResult(AuthenticateResult.NoResult());
 

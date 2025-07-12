@@ -1,4 +1,5 @@
 using AdminByRequestChallenge.API;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.OpenApi.Models;
 
@@ -20,7 +21,13 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddAuthentication(SessionKeyAuthenticationOptions.DefaultScheme)
                 .AddScheme<SessionKeyAuthenticationOptions, SessionKeyAuthenticationHandler>(SessionKeyAuthenticationOptions.DefaultScheme, opt => {  });
 
-builder.Services.AddAuthorization();  
+builder.Services.AddAuthorization(opts =>
+{
+    opts.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .AddAuthenticationSchemes(SessionKeyAuthenticationOptions.DefaultScheme)
+        .RequireAuthenticatedUser()
+        .Build();
+});
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCors();
@@ -83,8 +90,8 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 //}
-
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
