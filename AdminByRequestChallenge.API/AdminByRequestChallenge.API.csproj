@@ -13,6 +13,11 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
 	<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
 	<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.12.1" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +28,11 @@
 
   <ItemGroup>
     <None Include="SessionDatabase.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AdminByRequestChallange.Contracts\AdminByRequestChallange.Contracts.csproj" />
+    <ProjectReference Include="..\AdminByRequestChallenge.Core\AdminByRequestChallenge.Core.csproj" />
   </ItemGroup>
 
 </Project>

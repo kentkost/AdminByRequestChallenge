@@ -1,4 +1,6 @@
 using AdminByRequestChallenge.API;
+using AdminByRequestChallenge.Core;
+using AdminByRequestChallenge.DataContext;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.OpenApi.Models;
@@ -17,6 +19,9 @@ if (!string.IsNullOrWhiteSpace(env))
 builder.Services.AddSingleton<ISessionStore, InMemorySessionStore>();
 builder.Services.AddSingleton<IJwtFactory, JwtFactory>();
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
+
+builder.Services.UseCore(builder.Configuration);
+builder.Services.UseDbContexts(builder.Configuration);
 
 builder.Services.AddAuthentication(SessionKeyAuthenticationOptions.DefaultScheme)
                 .AddScheme<SessionKeyAuthenticationOptions, SessionKeyAuthenticationHandler>(SessionKeyAuthenticationOptions.DefaultScheme, opt => {  });

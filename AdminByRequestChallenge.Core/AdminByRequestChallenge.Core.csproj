@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Repositories\" />
-    <Folder Include="Services\" />
+    <ProjectReference Include="..\AdminByRequestChallange.Contracts\AdminByRequestChallange.Contracts.csproj" />
+    <ProjectReference Include="..\AdminByRequestChallenge.DataContext\AdminByRequestChallenge.DataContext.csproj" />
   </ItemGroup>
 
 </Project>

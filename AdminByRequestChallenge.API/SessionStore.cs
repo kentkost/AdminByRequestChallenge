@@ -9,21 +9,23 @@ public interface ISessionStore
     UserInfo? GetUser(string sessionKey);
 
     /// creates & persists a brand-new key
-    string CreateSession(string username, string password);
+    SessionResponse CreateSession(string username, string password);
 }
 
 public sealed class InMemorySessionStore : ISessionStore
 {
-    private readonly ConcurrentDictionary<string, (UserInfo user, DateTime expires)> _sessions = new();
+    private readonly ConcurrentDictionary<string, (UserInfo user, DateTimeOffset expires)> _sessions = new();
 
-    public string CreateSession(string username, string password)
+    public SessionResponse CreateSession(string username, string password)
     {
         // TODO replace with your real user-lookup
         if (username != "demo" || password != "demo") throw new UnauthorizedAccessException();
 
         var key = Guid.NewGuid().ToString();
-        _sessions[key] = (new UserInfo(Guid.NewGuid(), username), DateTime.UtcNow.AddHours(1));
-        return key;
+        DateTimeOffset expiration = DateTime.UtcNow.AddHours(1);
+        _sessions[key] = (new UserInfo(Guid.NewGuid(), username), expiration);
+        var resp = new SessionResponse(key, expiration.ToUnixTimeSeconds());
+        return resp;
     }
 
     public UserInfo? GetUser(string sessionKey)
@@ -36,3 +38,5 @@ public sealed class InMemorySessionStore : ISessionStore
 }
 
 public record UserInfo(Guid Id, string Username);
+
+public record SessionResponse(string session, long expiration);

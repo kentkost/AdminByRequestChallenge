@@ -2,18 +2,18 @@ BASE TASK:
 
 * ~~Set up swagger~~
 * Endpoints:
-  * Creating user
-    * Username, password, hash/salt password
+  ~~* Creating user~~
+    ~~* Username, password, hash/salt password~~
   * Getting onetime password for a user. (requires authentication)
   * Username and onetime password must be used in conjuntion to get onetime password. Or else it is not a guest access. 
     Just use Basic auth? Add middleware for checking. And if it says yes then skip standard authentication?
     Have authentication in middleware? Or separate controllers with different authentication strategies?
     Ideally I would implement this with Microsoft Identity. Where a PAT would be created with a time limit of 10 minutes and have a set of role functions that allows it to whatever.
     But that would not be a "simple" solution which is requested.
-* Create DBContext for users
-* Create EF migrations
+~~* Create DBContext for users~~
+~~* Create EF migrations~~
 * Create docker-compose
-* Add logging via graylog or seq
+~~* Add logging via graylog or seq~~
 * Fix readme.md
 * Add integration tests
 * Core functionalities:

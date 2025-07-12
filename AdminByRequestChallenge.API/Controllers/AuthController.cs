@@ -5,52 +5,23 @@ namespace AdminByRequestChallenge.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AuthController(ILogger<AuthController> logger, IHttpContextAccessor context, ISessionStore store) : ControllerBase
+public class AuthController(IHttpContextAccessor context, ISessionStore sessionStore) : ControllerBase
 {
     //[Authorize UserFunctions.GuestAccessCreation]
     [HttpPost("CreateGuestAccess"), AllowAnonymous]
-    public async Task<ActionResult> CreateGuestAccess()
+    public async Task<ActionResult> CreateGuestAccess(List<string> claims)
     {
         return Ok("Created one time password");
     }
 
-    [HttpPost("CreateSession"), AllowAnonymous]
-    public async Task<ActionResult> CreateSession([FromBody] LoginRequest loginRequest)
-    {
-        var session = SessionDatabase.CreateSession(loginRequest.Username, loginRequest.Password);
-
-        var siteRestrictions = SameSiteMode.None;
-        if (session != null && context.HttpContext != null)
-        {
-            context.HttpContext.Response.Cookies.Append("SessionID", session.SessionID, new CookieOptions
-            {
-                HttpOnly = true, 
-                Secure = true, 
-                SameSite = siteRestrictions,
-                Expires = session.Expiration
-            });
-
-            context.HttpContext.Response.Cookies.Append("Username", session.UserName, new CookieOptions
-            {
-                HttpOnly = true, 
-                Secure = true, 
-                SameSite = siteRestrictions,
-                Expires = session.Expiration
-            });
-            return Ok("Logged in");
-        }
-
-        return BadRequest("Couldn't log in");
-    }
-
-    [HttpPost("Login")]
-    [AllowAnonymous]
-    public IActionResult Login([FromBody] LoginDto dto)
+    /// TODO: Replace sessions with JWT instead. And then just populate JWT with audiences and claims
+    [HttpPost("Login"), AllowAnonymous]
+    public IActionResult Login([FromBody] LoginDTO dto)
     {
         try
         {
-            var key = store.CreateSession(dto.Username, dto.Password);
-            return Ok(new { session_key = key });
+            var newSession = sessionStore.CreateSession(dto.Username, dto.Password);
+            return Ok(newSession);
         }
         catch (UnauthorizedAccessException)
         {
@@ -58,8 +29,6 @@ public class AuthController(ILogger<AuthController> logger, IHttpContextAccessor
         }
 
     }
-    public record LoginDto(string Username, string Password);
-
 
     [Authorize("AdminFunctions.Block")]
     [HttpPost("InvalidateSessions")]
@@ -67,4 +36,29 @@ public class AuthController(ILogger<AuthController> logger, IHttpContextAccessor
     {
         return Ok("Invalidated sessions");
     }
+
+
+    [HttpPost("CreateSession"), AllowAnonymous, Obsolete("Abandoned concept", true)]
+    public async Task<ActionResult> CreateSession([FromBody] LoginDTO loginRequest)
+    {
+        var session = sessionStore.CreateSession(loginRequest.Username, loginRequest.Password);
+
+        var siteRestrictions = SameSiteMode.None;
+        if (session != null && context.HttpContext != null)
+        {
+            context.HttpContext.Response.Cookies.Append("SessionID", session.session, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = siteRestrictions,
+                Expires = DateTimeOffset.FromUnixTimeSeconds(session.expiration),
+            });
+
+            return Ok("Logged in");
+        }
+
+        return BadRequest("Couldn't log in");
+    }
+
+    public record LoginDTO(string Username, string Password);
 }
