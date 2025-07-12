@@ -1,5 +1,6 @@
 BASE TASK:
 
+* Set up swagger
 * Endpoints:
   * Creating user
     * Username, password, hash/salt password
@@ -45,6 +46,8 @@ EXTRA TASK:
 EXTRA MILE:
 * Create a gateway API (making rate limiting better/easier if more APIs are )
 * Create a HAProxy/nginx/traefik loadbalancer to make a PoC of blocking bad actors.
+
+
 
 Opgave
 
