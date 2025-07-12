@@ -1,0 +1,21 @@
+services:
+    database:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        environment:
+            - ACCEPT_EULA=Y
+            - SA_PASSWORD=!StrongPassword
+        ports:
+            - "1433:1433"
+    # service:
+    #     image: adminbyrequestapi
+    #     environment:
+    #         - ASPNETCORE_ENVIRONMENT=Development
+    #         - DOTNET_ENVIRONMENT=Development
+    #     depends_on:
+    #         - "database"
+
+#docker build -t adminbyrequestapi -f Dockerfile .
+#entrypoint: /bin/bash 
+
+#volumes:
+#  logvolume01: {}

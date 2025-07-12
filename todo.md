@@ -1,6 +1,6 @@
 BASE TASK:
 
-* Set up swagger
+* ~~Set up swagger~~
 * Endpoints:
   * Creating user
     * Username, password, hash/salt password
@@ -53,41 +53,41 @@ Opgave
 
 Design et simpelt system til engangskoder for adgang
 
-Du arbejder på et produkt, hvor man ønsker at give midlertidig adgang til en bestemt ressource via en 6-cifret engangskode. 
-Det skal fungere nogenlunde som en gæsteadgang – f.eks. til at hente en fil, tilgå en support-session eller lignende. 
-Hvad selve koden beskytter er ikke relevant – men arbejdet med koderne er.
+Du arbejder pï¿½ et produkt, hvor man ï¿½nsker at give midlertidig adgang til en bestemt ressource via en 6-cifret engangskode. 
+Det skal fungere nogenlunde som en gï¿½steadgang ï¿½ f.eks. til at hente en fil, tilgï¿½ en support-session eller lignende. 
+Hvad selve koden beskytter er ikke relevant ï¿½ men arbejdet med koderne er.
 
-Du bedes overveje, design og implementere en løsning (eller dele af en løsning) som kan løse denne opgave.
+Du bedes overveje, design og implementere en lï¿½sning (eller dele af en lï¿½sning) som kan lï¿½se denne opgave.
 
 Forslag til funktionalitet:
 
 Generering af adgangskode
 
     En bruger skal kunne anmode om en 6-cifret kode, som er unik og gyldig i f.eks. 10 minutter.
-    Koden skal være nem at indtaste manuelt.
+    Koden skal vï¿½re nem at indtaste manuelt.
 
 Validering af kode
 
-Når nogen forsøger at bruge en kode, skal systemet kunne afgøre, om den er:
+Nï¿½r nogen forsï¿½ger at bruge en kode, skal systemet kunne afgï¿½re, om den er:
 
-    gyldig (ikke udløbet),
+    gyldig (ikke udlï¿½bet),
     knyttet til en gyldig session/bruger/ressource,
     og ikke allerede brugt (engangskoder).
 
 Skalerbarhed og sikkerhed
 
-    Overvej hvordan systemet håndterer høj belastning (f.eks. 10.000 samtidige brugere).
-    Undgå brute-force angreb på koderne.
-    Det må gerne være muligt at sætte "rate limits".
+    Overvej hvordan systemet hï¿½ndterer hï¿½j belastning (f.eks. 10.000 samtidige brugere).
+    Undgï¿½ brute-force angreb pï¿½ koderne.
+    Det mï¿½ gerne vï¿½re muligt at sï¿½tte "rate limits".
 
-Audit og udløb
+Audit og udlï¿½b
 
-    Systemet skal kunne logge anvendelser og rydde op i udløbne koder.
+    Systemet skal kunne logge anvendelser og rydde op i udlï¿½bne koder.
 
 Andet
 
-    Hvordan ville du gøre det muligt at gemme audit logs i længere tid (f.eks. i Azure)?
-    Hvordan kunne man udvide det til også at virke offline i en begrænset periode?
-    Hvordan håndterer du forskellige miljøer (dev/test/prod) og hemmeligheder?
+    Hvordan ville du gï¿½re det muligt at gemme audit logs i lï¿½ngere tid (f.eks. i Azure)?
+    Hvordan kunne man udvide det til ogsï¿½ at virke offline i en begrï¿½nset periode?
+    Hvordan hï¿½ndterer du forskellige miljï¿½er (dev/test/prod) og hemmeligheder?
 
-Før samtalen bedes du sende et link til et repository hvor opgaven kan hentes ned sammen med evt. instruktioner til at køre løsningen.
+Fï¿½r samtalen bedes du sende et link til et repository hvor opgaven kan hentes ned sammen med evt. instruktioner til at kï¿½re lï¿½sningen.
