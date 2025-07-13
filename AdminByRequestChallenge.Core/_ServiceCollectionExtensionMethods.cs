@@ -6,7 +6,6 @@ using AdminByRequestChallenge.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-
 namespace AdminByRequestChallenge.Core;
 
 public static class ServiceCollectionExtensionMethods

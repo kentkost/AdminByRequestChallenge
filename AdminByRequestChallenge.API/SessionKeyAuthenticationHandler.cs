@@ -33,6 +33,7 @@ public sealed class SessionKeyAuthenticationHandler
         this.userRepo = userRepo;
     }
 
+    // God damn it I hate this soooooo much. It's ugly. It's expensive. And somewhat stupid.
     protected async override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         if (!Request.Headers.TryGetValue(Options.HeaderName, out var values))
