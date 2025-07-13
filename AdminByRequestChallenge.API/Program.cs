@@ -123,6 +123,7 @@ builder.Host.UseSerilog((hostingContext, services, loggerConfiguration) =>
 });
 
 builder.Services.AddMemoryCache();
+builder.Services.AddScoped<SessionValidatorMiddleware>();
 
 var app = builder.Build();
 
@@ -136,6 +137,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseMiddleware<SessionValidatorMiddleware>();
 app.UseMiddleware<RateLimiterMiddleware>();
+app.UseMiddleware<ClaimsAdderMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 

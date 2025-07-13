@@ -6,18 +6,16 @@ namespace AdminByRequestChallenge.API.Middlewares;
 /// The point of this middleware is to check if the session on the JWT has since been invalidated.
 /// In which case the user will not be able to connect.
 /// </summary>
-public class SessionValidatorMiddleware
+public class SessionValidatorMiddleware : IMiddleware
 {
-    private readonly RequestDelegate next;
     private readonly ISessionRepository sessionRepo;
 
-    public SessionValidatorMiddleware(RequestDelegate next, ISessionRepository sessionRepo)
+    public SessionValidatorMiddleware(ISessionRepository sessionRepo)
     {
-        this.next = next ?? throw new ArgumentNullException(nameof(next));
         this.sessionRepo = sessionRepo;
     }
 
-    public async Task Invoke(HttpContext context, IHttpContextAccessor accessor)
+    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         if (context.User.Identity != null && context.User.Identity.IsAuthenticated)
         {
