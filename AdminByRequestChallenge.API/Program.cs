@@ -1,4 +1,5 @@
 using AdminByRequestChallange.API;
+using AdminByRequestChallenge.API.Middlewares;
 using AdminByRequestChallenge.Core;
 using AdminByRequestChallenge.DataContext;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -121,6 +122,8 @@ builder.Host.UseSerilog((hostingContext, services, loggerConfiguration) =>
     loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration);
 });
 
+builder.Services.AddMemoryCache();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -131,6 +134,7 @@ app.UseSwaggerUI();
 //}
 app.UseHttpsRedirection();
 app.UseAuthentication();
+app.UseMiddleware<RateLimiterMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 
