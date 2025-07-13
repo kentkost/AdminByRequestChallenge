@@ -16,7 +16,9 @@ public static class ServiceCollectionExtensionMethods
         services.AddTransient<IUsersService, UsersService>();
         services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<IAuthService, AuthService>();
-        services.AddTransient<ISessionRepository, SessionDatabaseRepository>();
+        services.AddTransient<ISessionRepository, SessionDatabaseRepository>()
+                .Decorate<ISessionRepository, SessionRedisRepository>();
+        
         services.AddSingleton<IJwtProvider, JwtProvider>();
         var jwtOptions = configuration.GetRequiredSection("Jwt").Get<JwtOptions>();
 
