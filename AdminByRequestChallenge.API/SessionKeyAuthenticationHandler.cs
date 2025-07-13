@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using AdminByRequestChallenge.Core.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
@@ -14,52 +15,55 @@ public sealed class SessionKeyAuthenticationOptions : AuthenticationSchemeOption
 public sealed class SessionKeyAuthenticationHandler
     : AuthenticationHandler<SessionKeyAuthenticationOptions>
 {
-    private readonly ISessionStore _store;
-    private readonly IJwtFactory _jwtFactory;
+    private readonly ISessionRepository sessionRepo;
+    private readonly IJwtProvider jwtProvider;
+    private readonly IUserRepository userRepo;
 
     public SessionKeyAuthenticationHandler(
         IOptionsMonitor<SessionKeyAuthenticationOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder,
-        ISessionStore store,
-        IJwtFactory jwtFactory)
+        ISessionRepository sessionRepo,
+        IJwtProvider jwtProvider,
+        IUserRepository userRepo)
         : base(options, logger, encoder)
     {
-        _store = store;
-        _jwtFactory = jwtFactory;
+        this.sessionRepo = sessionRepo;
+        this.jwtProvider = jwtProvider;
+        this.userRepo = userRepo;
     }
 
-    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+    protected async override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         if (!Request.Headers.TryGetValue(Options.HeaderName, out var values))
-            return Task.FromResult(AuthenticateResult.NoResult());
+            return AuthenticateResult.NoResult();
 
         var key = values.FirstOrDefault();
         if (string.IsNullOrWhiteSpace(key))
-            return Task.FromResult(AuthenticateResult.NoResult());
+            return AuthenticateResult.NoResult();
+        
 
-        // 2) validate
-        var user = _store.GetUser(key!);
-        if (user is null)
-            return Task.FromResult(AuthenticateResult.Fail("Invalid session key"));
+        var session = await sessionRepo.GetNonExpiredSession(key);
+        if (session is null)
+            return AuthenticateResult.Fail("Invalid or expired session");
 
-        // 3) build principal
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Username)
-        };
+        if(session.IsGuest && session.HasBeenUsed)
+            return AuthenticateResult.Fail("Guest session already been used");
+        
+        var user = await userRepo.GetUser(session.Username);
+        var claims = jwtProvider.GetClaims(user);
+
         var identity = new ClaimsIdentity(claims, Scheme.Name);
         var principal = new ClaimsPrincipal(identity);
 
         // 4) mint JWT & stick it somewhere handy
-        var jwt = _jwtFactory.Create(user);
+        var jwt = jwtProvider.CreateToken(session, user, claims);
         //   a) make it a claim so downstream code can read it easily
         identity.AddClaim(new Claim("access_token", jwt));
         //   b) (optional) make it available via HttpContext.Items
         Context.Items["access_token"] = jwt;
-
+        sessionRepo.SetSessionAsUsed(key);
         var ticket = new AuthenticationTicket(principal, Scheme.Name);
-        return Task.FromResult(AuthenticateResult.Success(ticket));
+        return AuthenticateResult.Success(ticket);
     }
 }

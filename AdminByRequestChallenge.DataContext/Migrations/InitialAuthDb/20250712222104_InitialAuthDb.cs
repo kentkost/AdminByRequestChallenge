@@ -11,6 +11,21 @@ namespace AdminByRequestChallenge.DataContext.Migrations.InitialAuthDb
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Sessions",
+                columns: table => new
+                {
+                    SessionKey = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    Expiration = table.Column<long>(type: "bigint", nullable: false),
+                    IsGuest = table.Column<bool>(type: "bit", nullable: false),
+                    HasBeenUsed = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sessions", x => x.SessionKey);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -29,6 +44,9 @@ namespace AdminByRequestChallenge.DataContext.Migrations.InitialAuthDb
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Sessions");
+
             migrationBuilder.DropTable(
                 name: "Users");
         }

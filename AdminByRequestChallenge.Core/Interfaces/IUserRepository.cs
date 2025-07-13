@@ -2,7 +2,8 @@
 
 namespace AdminByRequestChallenge.Core.Interfaces;
 
-public interface IUsersRepository
+public interface IUserRepository
 {
     Task<bool> CreateUser(User entUser);
+    Task<User> GetUser(string username);
 }

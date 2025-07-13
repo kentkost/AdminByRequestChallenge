@@ -16,9 +16,7 @@ if (!string.IsNullOrWhiteSpace(env))
     builder.Configuration.AddJsonFile($"appsettings.{env}.json", true, true);
 }
 
-builder.Services.AddSingleton<ISessionStore, InMemorySessionStore>();
-builder.Services.AddSingleton<IJwtFactory, JwtFactory>();
-builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
+//builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 
 builder.Services.UseCore(builder.Configuration);
 builder.Services.UseDbContexts(builder.Configuration);
@@ -26,13 +24,11 @@ builder.Services.UseDbContexts(builder.Configuration);
 builder.Services.AddAuthentication(SessionKeyAuthenticationOptions.DefaultScheme)
                 .AddScheme<SessionKeyAuthenticationOptions, SessionKeyAuthenticationHandler>(SessionKeyAuthenticationOptions.DefaultScheme, opt => {  });
 
-builder.Services.AddAuthorization(opts =>
-{
-    opts.FallbackPolicy = new AuthorizationPolicyBuilder()
-        .AddAuthenticationSchemes(SessionKeyAuthenticationOptions.DefaultScheme)
-        .RequireAuthenticatedUser()
-        .Build();
-});
+builder.Services.AddAuthorizationBuilder()
+                .SetFallbackPolicy(new AuthorizationPolicyBuilder()
+                .AddAuthenticationSchemes(SessionKeyAuthenticationOptions.DefaultScheme)
+                .RequireAuthenticatedUser()
+                .Build());
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCors();

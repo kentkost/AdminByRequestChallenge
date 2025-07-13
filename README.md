@@ -5,6 +5,7 @@
 * Docker
 * .NET Core 9.0
 * SSMS (if you want to look at the data yourself)
+* EF Migrations 
 
 ## Getting started
 

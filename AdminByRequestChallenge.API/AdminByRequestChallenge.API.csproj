@@ -27,10 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="SessionDatabase.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\AdminByRequestChallange.Contracts\AdminByRequestChallange.Contracts.csproj" />
     <ProjectReference Include="..\AdminByRequestChallenge.Core\AdminByRequestChallenge.Core.csproj" />
   </ItemGroup>

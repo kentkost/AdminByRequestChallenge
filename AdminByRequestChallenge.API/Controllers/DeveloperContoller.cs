@@ -9,7 +9,7 @@ namespace AdminByRequestChallenge.API.Controllers;
 // This just exists for some manual testing
 [ApiController]
 [Route("[controller]")]
-public class UserContoller(IUsersService usersService) : ControllerBase
+public class DeveloperContoller(IUsersService usersService) : ControllerBase
 {
 
     [HttpPost, AllowAnonymous]
@@ -21,6 +21,14 @@ public class UserContoller(IUsersService usersService) : ControllerBase
             return Ok("Created User");
 
         return BadRequest("Something unexpected happened");
+    }
+
+    [HttpGet, AllowAnonymous]
+    public async Task<ActionResult> InitializeTestData()
+    {
+        var res = await usersService.CreateUser(new UserCreationDTO() { Username ="TestUser", Password="notSoSecret"});
+
+        return Ok();
     }
 }
 #endif

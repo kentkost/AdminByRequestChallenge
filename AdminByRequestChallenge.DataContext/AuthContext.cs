@@ -16,7 +16,9 @@ public class AuthContext : DbContext
         this.loggerFactory = loggerFactory;
     }
 
-    public DbSet<User>  Users { get; set; } 
+    public DbSet<User>  Users { get; set; }
+    public DbSet<Session> Sessions { get; set; }
+
     //public DbSet<ClaimFunction> ClaimFunctions { get; set; }
     //public DbSet<UserClaims> UserClaims { get; set; }
 
@@ -24,6 +26,7 @@ public class AuthContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new SessionConfiguration());
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

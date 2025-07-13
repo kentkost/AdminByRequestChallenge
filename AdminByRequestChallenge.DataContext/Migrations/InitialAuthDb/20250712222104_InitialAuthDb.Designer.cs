@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdminByRequestChallenge.DataContext.Migrations.InitialAuthDb
 {
     [DbContext(typeof(AuthContext))]
-    [Migration("20250712173756_InitialAuthDb")]
+    [Migration("20250712222104_InitialAuthDb")]
     partial class InitialAuthDb
     {
         /// <inheritdoc />
@@ -23,6 +23,31 @@ namespace AdminByRequestChallenge.DataContext.Migrations.InitialAuthDb
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("AdminByRequestChallenge.DataContext.Entities.Session", b =>
+                {
+                    b.Property<string>("SessionKey")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<long>("Expiration")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("HasBeenUsed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsGuest")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.HasKey("SessionKey");
+
+                    b.ToTable("Sessions", (string)null);
+                });
 
             modelBuilder.Entity("AdminByRequestChallenge.DataContext.Entities.User", b =>
                 {
