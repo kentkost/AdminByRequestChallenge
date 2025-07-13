@@ -52,7 +52,7 @@ public sealed class SessionKeyAuthenticationHandler
             return AuthenticateResult.Fail("Guest session already been used");
         
         var user = await userRepo.GetUser(session.Username);
-        var claims = jwtProvider.GetClaims(user);
+        var claims = jwtProvider.GetBasicClaims(user, session.SessionKey);
 
         var identity = new ClaimsIdentity(claims, Scheme.Name);
         var principal = new ClaimsPrincipal(identity);

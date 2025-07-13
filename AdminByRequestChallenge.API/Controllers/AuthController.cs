@@ -48,36 +48,46 @@ public class AuthController(IHttpContextAccessor context, IAuthService authServi
         }
     }
 
+    [HttpPost("NewLogin"), AllowAnonymous]
+    public async Task<IActionResult> NewLogin([FromBody] LoginDTO dto)
+    {
+        try
+        {
+            var newSession = await authService.CreateJwt(dto.Username, dto.Password);
+            if (newSession != null)
+                return Ok(newSession);
+
+            return BadRequest();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
+        }
+    }
+
+    [HttpPost("GuestLogin"),AllowAnonymous]
+    public async Task<IActionResult> GuestLogin([FromBody] LoginDTO dto)
+    {
+        try
+        {
+            var newSession = await authService.CreateJwt(dto.Username, dto.Password);
+            if (newSession != null)
+                return Ok(newSession);
+
+            return BadRequest();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
+        }
+    }
+
     [HttpPost("InvalidateSessions"), Authorize("AdminFunctions.InvalidateSessions")]
     public async Task<ActionResult> InvalidateSessions(string username)
     {
         throw new NotImplementedException();
         return Ok("Invalidated sessions");
     }
-
-
-    //[HttpPost("CreateSession"), AllowAnonymous, Obsolete("Abandoned concept. Had an idea, but leaving it as a talking point", true)]
-    //public async Task<ActionResult> CreateSession([FromBody] LoginDTO loginRequest)
-    //{
-    //    throw new Exception("Obsolete.");
-    //    var newSession = sessionStore.CreateSession(loginRequest.Username, loginRequest.Password);
-
-    //    var siteRestrictions = SameSiteMode.None;
-    //    if (newSession != null && context.HttpContext != null)
-    //    {
-    //        context.HttpContext.Response.Cookies.Append("SessionID", newSession.SessionKey, new CookieOptions
-    //        {
-    //            HttpOnly = true,
-    //            Secure = true,
-    //            SameSite = siteRestrictions,
-    //            Expires = DateTimeOffset.FromUnixTimeSeconds(newSession.Expiration),
-    //        });
-
-    //        return Ok("Logged in");
-    //    }
-
-    //    return BadRequest("Couldn't log in");
-    //}
 
     public record LoginDTO(string Username, string Password);
 }

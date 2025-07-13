@@ -22,13 +22,30 @@ public sealed class JwtProvider : IJwtProvider
             SecurityAlgorithms.RsaSha256);
     }
 
-    public Claim[] GetClaims(User user) => 
-        new[] {
+    public string CreateToken(string sessionKey, long expiration, User user)    
+    {
+        //IEnumerable<int> roleFunctions = new List<int> { 1, 2, 3, 4 };
+        var claims = GetBasicClaims(user, sessionKey);
+        //claims.AddRange(roleFunctions.Select(rf => new Claim("AF", rf.ToString())));
+        
+        var jwt = new JwtSecurityToken(
+                issuer: opt.Issuer,
+                audience: opt.Audience,
+                claims: claims,
+                expires: new DateTime(expiration, DateTimeKind.Utc),
+                signingCredentials: creds);
+
+        return new JwtSecurityTokenHandler().WriteToken(jwt);
+    }
+
+    public List<Claim> GetBasicClaims(User user, string sessionKey) =>
+        new List<Claim>() {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Username)
+            new Claim("Username", user.Username),
+            new Claim("SessionKey", sessionKey)
         };
 
-    string IJwtProvider.CreateToken(Session session, User user, Claim[] claims)
+    public string CreateToken(Session session, User user, List<Claim> claims)
     {
         var jwt = new JwtSecurityToken(
                 issuer: opt.Issuer,

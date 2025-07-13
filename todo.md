@@ -1,12 +1,19 @@
+* Ændrer det til:
+  * Brug JWT tokens istedet
+  * Opret gæste adgang (Gæste endpoint)
+    * Skal oprette en JWT med de funktioner brugeren vil ha.
+  * Hav et sessionID på JWT'en. Således at ejg altid kan invalidate den.
+  * Lagrer sessions i databasen og markér dem som gæste adgang, expiration, brugt, etc.
+  * Create guest access with claims.
+
+  
 BASE TASK:
 
 * ~~Set up swagger~~
 * Endpoints:
 * Fix readme.md
-* Add graylog sink
 
 EXTRA TASK:
-* add redis for tmp passwords and sessions. To improve scalability
 * Preventing brute force of passwords.
   * Rate limit login attempts (token/session creation) 
   * Ideally I would a loadbalancer add extra information such as IP address to the request and then block bad actors.

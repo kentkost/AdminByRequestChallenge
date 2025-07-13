@@ -1,10 +1,14 @@
+using AdminByRequestChallange.API;
 using AdminByRequestChallenge.API;
 using AdminByRequestChallenge.Core;
 using AdminByRequestChallenge.DataContext;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using System.Security.Cryptography;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,22 +25,48 @@ if (!string.IsNullOrWhiteSpace(env))
 
 builder.Services.UseCore(builder.Configuration);
 builder.Services.UseDbContexts(builder.Configuration);
+RSA rsa = RSA.Create();
+//Save the public key information to an RSAParameters structure.  
+//RSAParameters rsaKeyInfo = rsa.ExportParameters(false);
+//var publicKey = System.Convert.ToBase64String(rsa.ExportRSAPublicKey());
+//var privateKey= System.Convert.ToBase64String(rsa.ExportRSAPrivateKey());
 
-builder.Services.AddAuthentication(SessionKeyAuthenticationOptions.DefaultScheme)
-                .AddScheme<SessionKeyAuthenticationOptions, SessionKeyAuthenticationHandler>(SessionKeyAuthenticationOptions.DefaultScheme, opt => {  });
+var jwtSettings = builder.Configuration.GetSection("JWT").Get<JWTSettings>();
+
+RSA publicRsa = RSA.Create();
+publicRsa.ImportRSAPublicKey(
+    source: Convert.FromBase64String(jwtSettings.PublicKey),
+    bytesRead: out int _
+);
+
+var signingKey = new RsaSecurityKey(publicRsa);
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = signingKey,
+            ValidateIssuer = !string.IsNullOrWhiteSpace(jwtSettings.Issuer),
+            ValidIssuer = jwtSettings.Issuer,
+            ValidateAudience = !string.IsNullOrWhiteSpace(jwtSettings.Audience),
+            ValidAudience = jwtSettings.Audience,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromMinutes(2)
+        };
+    });
 
 builder.Services.AddAuthorizationBuilder()
-                .SetFallbackPolicy(new AuthorizationPolicyBuilder()
-                .AddAuthenticationSchemes(SessionKeyAuthenticationOptions.DefaultScheme)
-                .RequireAuthenticatedUser()
-                .Build());
+    .SetFallbackPolicy(new AuthorizationPolicyBuilder()
+        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+        .RequireAuthenticatedUser()
+        .Build());
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCors();
-
 builder.Services.AddControllers();
-
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -47,12 +77,13 @@ builder.Services.AddSwaggerGen(c =>
     });
 
     // Define the header-based SessionKey scheme
-    c.AddSecurityDefinition("SessionKey", new OpenApiSecurityScheme
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Type = SecuritySchemeType.ApiKey,
-        Name = "X-Session-Key",              // This matches what your handler reads
+        Description = "Please enter into field the word 'Bearer' following by space and JWT",
+        Name = "Authorization",
         In = ParameterLocation.Header,
-        Description = "Paste your session-key here"
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
     });
 
     // Apply globally to all endpoints (unless [AllowAnonymous])
@@ -64,7 +95,7 @@ builder.Services.AddSwaggerGen(c =>
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
-                    Id = "SessionKey"
+                    Id = "Bearer"
                 }
             },
             Array.Empty<string>()
