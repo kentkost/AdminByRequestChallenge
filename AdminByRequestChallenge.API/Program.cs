@@ -1,5 +1,4 @@
 using AdminByRequestChallange.API;
-using AdminByRequestChallenge.API;
 using AdminByRequestChallenge.Core;
 using AdminByRequestChallenge.DataContext;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
 // For production. Add json file through Azure Key Vault.
-// Or get configuration through some Repository/Store
+//builder.Configuration.AddAzureKeyVault(vaultUri, new DefaultAzureCredential());
 if (!string.IsNullOrWhiteSpace(env))
 {
     builder.Configuration.AddJsonFile($"appsettings.{env}.json", true, true);

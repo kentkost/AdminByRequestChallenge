@@ -12,7 +12,7 @@ namespace AdminByRequestChallenge.API.Controllers;
 public class DeveloperController(IUsersService usersService) : ControllerBase
 {
 
-    [HttpPost, AllowAnonymous]
+    [HttpPost("CreateUser"), AllowAnonymous]
     public async Task<ActionResult> CreateUser([FromBody] UserCreationDTO newUser)
     {
         var res = await usersService.CreateUser(newUser);
@@ -23,10 +23,10 @@ public class DeveloperController(IUsersService usersService) : ControllerBase
         return BadRequest("Something unexpected happened");
     }
 
-    [HttpGet, AllowAnonymous]
+    [HttpGet("InitializeTestData"), AllowAnonymous]
     public async Task<ActionResult> InitializeTestData()
     {
-        var res = await usersService.CreateUser(new UserCreationDTO() { Username ="TestUser", Password="notSoSecret"});
+        var res = await usersService.CreateUser(new UserCreationDTO() { Username ="testuser", Password="notSoSecret"});
 
         return Ok();
     }

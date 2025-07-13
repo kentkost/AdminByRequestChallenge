@@ -1,12 +1,15 @@
+todo:
+* tilføj claims
+* tilføj rate limiting middleware
+* tilføj session invalidated middleware
+* tilføj claims middleware
+
 * Ændrer det til:
-  * Brug JWT tokens istedet
-  * Opret gæste adgang (Gæste endpoint)
-    * Skal oprette en JWT med de funktioner brugeren vil ha.
-  * Hav et sessionID på JWT'en. Således at ejg altid kan invalidate den.
-  * Lagrer sessions i databasen og markér dem som gæste adgang, expiration, brugt, etc.
   * Create guest access with claims.
 
-  
+* Sessions lagret var en dårlig idé iht. sikkerhed. Fordi så har man adgang til alle sessions via databasen.
+  * Alterntivt så hashede jeg sessions og matchede op derefter.
+
 BASE TASK:
 
 * ~~Set up swagger~~

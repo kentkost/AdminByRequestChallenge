@@ -30,7 +30,7 @@ public class UserRepository(AuthContext context) : IUserRepository
     }
 
     public async Task<List<GuestUser>> GetGuestUsers(string username)
-        => await context.GuestUsers.AsNoTracking().Where(x => x.BeenUsed == false && x.Username == username.ToLower().Trim()).ToListAsync();
+        => await context.GuestUsers.AsNoTracking().Where(x => x.BeenUsed == false && x.Username == username.ToLower().Trim() && x.Expiration >= DateTime.UtcNow).ToListAsync();
 
     public async Task<User> GetUser(string username)
         => await context.Users.AsNoTracking().Where(x => x.Username == username.ToLower().Trim()).FirstAsync();

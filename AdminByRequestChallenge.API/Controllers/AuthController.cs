@@ -1,4 +1,5 @@
 ﻿using AdminByRequestChallenge.Core.Interfaces;
+using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
