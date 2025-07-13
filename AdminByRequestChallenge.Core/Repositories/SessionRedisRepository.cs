@@ -24,15 +24,15 @@ public class SessionRedisRepository(ISessionRepository databaseRepo, ILogger<Ses
         await databaseRepo.InvalidateSessions(username);
     }
 
-    public async Task<bool> MarkSessionAsUsed(string key)
+    public async Task<bool> MarkSessionAsInvalid(string key)
     {
         logger.LogInformation("Couldn't mark session as used in redis. Because not implemented");
-        return await databaseRepo.MarkSessionAsUsed(key);
+        return await databaseRepo.MarkSessionAsInvalid(key);
     }
 
     public void SetSessionAsUsed(string key)
     {
         logger.LogInformation("Couldn't set session as used in Redis. Because not implemented");
-        databaseRepo.MarkSessionAsUsed(key);
+        databaseRepo.MarkSessionAsInvalid(key);
     }
 }

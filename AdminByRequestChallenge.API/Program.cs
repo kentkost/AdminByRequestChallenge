@@ -26,7 +26,8 @@ if (!string.IsNullOrWhiteSpace(env))
 builder.Services.UseCore(builder.Configuration);
 builder.Services.UseDbContexts(builder.Configuration);
 RSA rsa = RSA.Create();
-//Save the public key information to an RSAParameters structure.  
+
+// Hack to get keys
 //RSAParameters rsaKeyInfo = rsa.ExportParameters(false);
 //var publicKey = System.Convert.ToBase64String(rsa.ExportRSAPublicKey());
 //var privateKey= System.Convert.ToBase64String(rsa.ExportRSAPrivateKey());

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -11,6 +12,24 @@ namespace AdminByRequestChallenge.DataContext.Migrations.InitialAuthDb
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "GuestAccesses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    HostUserId = table.Column<int>(type: "int", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    BeenUsed = table.Column<bool>(type: "bit", nullable: false),
+                    Expiration = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Salt = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GuestAccesses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Sessions",
                 columns: table => new
                 {
@@ -18,7 +37,7 @@ namespace AdminByRequestChallenge.DataContext.Migrations.InitialAuthDb
                     Username = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     Expiration = table.Column<long>(type: "bigint", nullable: false),
                     IsGuest = table.Column<bool>(type: "bit", nullable: false),
-                    HasBeenUsed = table.Column<bool>(type: "bit", nullable: false)
+                    Valid = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,6 +63,9 @@ namespace AdminByRequestChallenge.DataContext.Migrations.InitialAuthDb
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "GuestAccesses");
+
             migrationBuilder.DropTable(
                 name: "Sessions");
 

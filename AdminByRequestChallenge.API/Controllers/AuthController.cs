@@ -6,7 +6,7 @@ namespace AdminByRequestChallenge.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AuthController(IHttpContextAccessor context, IAuthService authService) : ControllerBase
+public class AuthController(IHttpContextAccessor context, IAuthService authService, IUsersService usersService) : ControllerBase
 {
     //[Authorize UserFunctions.GuestAccessCreation]
     [HttpPost("CreateGuestAccess")]
@@ -14,11 +14,11 @@ public class AuthController(IHttpContextAccessor context, IAuthService authServi
     {
         try
         {
-            const string claimUsername = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
+            const string claimUsername = "Username";
             var con = context.HttpContext;
             var inviter = context.HttpContext.User.Claims.Where(x=> x.Type == claimUsername).Select(x => x.Value).First();
-            var guestSession = await authService.CreateGuestSession(inviter, claims);
-            return Ok(guestSession);
+            var guestPassword = await usersService.CreateGuestUser(inviter, claims);
+            return Ok(guestPassword);
         }
         catch (UnauthorizedAccessException)
         {
@@ -30,25 +30,7 @@ public class AuthController(IHttpContextAccessor context, IAuthService authServi
         }
     }
 
-    /// TODO: Replace sessions with JWT instead. And then just populate JWT with audiences and claims
     [HttpPost("Login"), AllowAnonymous]
-    public async Task<IActionResult> Login([FromBody] LoginDTO dto)
-    {
-        try
-        {
-            var newSession = await authService.CreateSession(dto.Username, dto.Password);
-            if (newSession != null)
-                return Ok(newSession);
-            
-            return BadRequest();
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return Unauthorized();
-        }
-    }
-
-    [HttpPost("NewLogin"), AllowAnonymous]
     public async Task<IActionResult> NewLogin([FromBody] LoginDTO dto)
     {
         try
@@ -65,12 +47,12 @@ public class AuthController(IHttpContextAccessor context, IAuthService authServi
         }
     }
 
-    [HttpPost("GuestLogin"),AllowAnonymous]
-    public async Task<IActionResult> GuestLogin([FromBody] LoginDTO dto)
+    [HttpPost("GuestLogin"), AllowAnonymous]
+    public async Task<IActionResult> GuestLogin(string username, string password)
     {
         try
         {
-            var newSession = await authService.CreateJwt(dto.Username, dto.Password);
+            var newSession = await authService.CreateGuestJwt(username, password);
             if (newSession != null)
                 return Ok(newSession);
 

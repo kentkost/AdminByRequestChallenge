@@ -13,4 +13,12 @@ public static class PasswordHashProvider
 
     public static byte[] HashPassword(string password, byte[] salt)
         => Rfc2898DeriveBytes.Pbkdf2(password, salt, iterations, algo, keySize);
+
+    public static string GenerateSixDigitCode()
+    {
+        Span<byte> buffer = stackalloc byte[4];
+        RandomNumberGenerator.Fill(buffer);
+        uint randomInt = BitConverter.ToUInt32(buffer) & 0x7FFFFFFF;
+        return (randomInt % 1_000_000).ToString("D6");
+    }
 }

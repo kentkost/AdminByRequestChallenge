@@ -9,7 +9,7 @@ namespace AdminByRequestChallenge.API.Controllers;
 // This just exists for some manual testing
 [ApiController]
 [Route("[controller]")]
-public class DeveloperContoller(IUsersService usersService) : ControllerBase
+public class DeveloperController(IUsersService usersService) : ControllerBase
 {
 
     [HttpPost, AllowAnonymous]

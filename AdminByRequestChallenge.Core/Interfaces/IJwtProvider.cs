@@ -6,7 +6,6 @@ namespace AdminByRequestChallenge.Core.Interfaces;
 
 public interface IJwtProvider
 {
-    string CreateToken(Session session, User user, List<Claim> claims);
-    string CreateToken(string sessionKey, long expiration, User user);
-    List<Claim> GetBasicClaims(User user, string sessionKey);
+    string CreateToken(string sessionKey, long expiration, User user, bool isGuest = false);
+    List<Claim> GetBasicClaims(User user, string sessionKey, bool isGuest);
 }

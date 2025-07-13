@@ -19,4 +19,21 @@ public class UsersService(IUserRepository repo) : IUsersService
 
         return await repo.CreateUser(entUser);
     }
+
+    public async Task<string> CreateGuestUser(string inviter, List<string> claims)
+    {
+        var host = await repo.GetUser(inviter);
+        var key = Guid.NewGuid().ToString();
+        var expiration = DateTime.UtcNow;
+        var tmpCode = PasswordHashProvider.GenerateSixDigitCode();
+        var salt = PasswordHashProvider.GenerateSalt();
+        var hashedPassword = PasswordHashProvider.HashPassword(tmpCode, salt);
+
+        var couldCreateGuest = await repo.CreateGuestUser(host, expiration, hashedPassword, salt);
+
+        if (!couldCreateGuest)
+            throw new Exception("Couldn't create guest user");
+
+        return tmpCode;
+    }
 }

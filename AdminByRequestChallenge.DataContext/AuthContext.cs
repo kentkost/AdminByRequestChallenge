@@ -18,6 +18,7 @@ public class AuthContext : DbContext
 
     public DbSet<User>  Users { get; set; }
     public DbSet<Session> Sessions { get; set; }
+    public DbSet<GuestUser> GuestUsers { get; set; }
 
     //public DbSet<ClaimFunction> ClaimFunctions { get; set; }
     //public DbSet<UserClaims> UserClaims { get; set; }
@@ -27,6 +28,7 @@ public class AuthContext : DbContext
     {
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new SessionConfiguration());
+        modelBuilder.ApplyConfiguration(new GuestUserConfiguration());
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
