@@ -30,7 +30,10 @@ public class UserRepository(AuthContext context) : IUserRepository
     }
 
     public async Task<List<GuestUser>> GetGuestUsers(string username)
-        => await context.GuestUsers.AsNoTracking().Where(x => x.BeenUsed == false && x.Username == username.ToLower().Trim() && x.Expiration >= DateTime.UtcNow).ToListAsync();
+    {
+        var now = DateTime.UtcNow;
+        return await context.GuestUsers.AsNoTracking().Where(x => x.BeenUsed == false && x.Username == username.ToLower().Trim() && x.Expiration >= now).ToListAsync();
+    }
 
     public async Task<User> GetUser(string username)
         => await context.Users.AsNoTracking().Where(x => x.Username == username.ToLower().Trim()).FirstAsync();
@@ -38,3 +41,4 @@ public class UserRepository(AuthContext context) : IUserRepository
     public void MarkGuestUserPasswordAsUsed(int id)
         => context.GuestUsers.Where(x => x.Id == id).ExecuteUpdate(x => x.SetProperty(x => x.BeenUsed, true));
 }
+

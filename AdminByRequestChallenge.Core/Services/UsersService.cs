@@ -24,7 +24,7 @@ public class UsersService(IUserRepository repo) : IUsersService
     {
         var host = await repo.GetUser(inviter);
         var key = Guid.NewGuid().ToString();
-        var expiration = DateTime.UtcNow;
+        var expiration = DateTime.UtcNow.AddMinutes(10);
         var tmpCode = PasswordHashProvider.GenerateSixDigitCode();
         var salt = PasswordHashProvider.GenerateSalt();
         var hashedPassword = PasswordHashProvider.HashPassword(tmpCode, salt);
