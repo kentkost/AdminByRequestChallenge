@@ -1,5 +1,4 @@
-﻿using AdminByRequestChallange.Contracts;
-using AdminByRequestChallenge.DataContext.Entities;
+﻿using AdminByRequestChallenge.DataContext.Entities;
 
 namespace AdminByRequestChallenge.Core.Interfaces;
 
@@ -9,4 +8,5 @@ public interface ISessionRepository
     Task<Session?> GetNonExpiredSession(string key);
     Task<bool> MarkSessionAsInvalid(string key);
     Task InvalidateSessions(string username);
+    Task<bool> IsSessionValid(string sessionKey);
 }

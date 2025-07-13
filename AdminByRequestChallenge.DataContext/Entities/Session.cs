@@ -6,5 +6,5 @@ public class Session
     public required string SessionKey { get; set; }
     public long Expiration { get; set; }
     public bool IsGuest { get; set; }
-    public bool Valid { get; set; }
+    public bool IsValid { get; set; }
 }

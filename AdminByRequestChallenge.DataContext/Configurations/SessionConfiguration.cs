@@ -14,7 +14,7 @@ public class SessionConfiguration : IEntityTypeConfiguration<Session>
         builder.Property(s => s.Username).IsRequired().HasMaxLength(250);
         builder.Property(s => s.Expiration).IsRequired();
         builder.Property(s => s.IsGuest).IsRequired();
-        builder.Property(s => s.Valid).IsRequired();
+        builder.Property(s => s.IsValid).IsRequired();
     }
 }
 

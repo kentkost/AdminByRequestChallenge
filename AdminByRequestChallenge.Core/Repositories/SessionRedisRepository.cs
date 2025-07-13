@@ -24,6 +24,12 @@ public class SessionRedisRepository(ISessionRepository databaseRepo, ILogger<Ses
         await databaseRepo.InvalidateSessions(username);
     }
 
+    public async Task<bool> IsSessionValid(string sessionKey)
+    {
+        logger.LogInformation("Couldn't get session from Redis. Because not implemented");
+        return await databaseRepo.IsSessionValid(sessionKey);
+    }
+
     public async Task<bool> MarkSessionAsInvalid(string key)
     {
         logger.LogInformation("Couldn't mark session as used in redis. Because not implemented");

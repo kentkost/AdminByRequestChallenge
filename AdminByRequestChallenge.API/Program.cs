@@ -134,6 +134,7 @@ app.UseSwaggerUI();
 //}
 app.UseHttpsRedirection();
 app.UseAuthentication();
+app.UseMiddleware<SessionValidatorMiddleware>();
 app.UseMiddleware<RateLimiterMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
